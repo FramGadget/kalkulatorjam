@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KALKULATOR WAKTU IZIN KELUAR OFFICE</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      text-align: center;
+      color: #00796b;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #009688;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00796b;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #f1f8e9;
+      color: #33691e;
+      font-size: 1.1em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      white-space: pre-line;
+    }
+
+    #result.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #777;
+      text-align: center;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Hitung Waktu Izin Keluar</h2>
+
+    <label>Waktu Keluar:</label>
+    <input type="time" id="startTime">
+
+    <label>Waktu Masuk:</label>
+    <input type="time" id="endTime">
+
+    <label>Sisa Waktu (menit):</label>
+    <input type="number" id="targetMinutes" placeholder="Contoh: 45">
+
+    <button onclick="calculateRemaining()">Hitung</button>
+
+    <div id="result"></div>
+  </div>
+
+  <div class="footer">
+    Dibuat oleh: <strong>Fram</strong>
+  </div>
+
+  <script>
+    function calculateRemaining() {
+      const startTime = document.getElementById("startTime").value;
+      const endTime = document.getElementById("endTime").value;
+      const target = parseInt(document.getElementById("targetMinutes").value) || 0;
+      const resultDiv = document.getElementById("result");
+
+      if (!startTime || !endTime || !target) {
+        resultDiv.innerText = "Mohon isi semua kolom.";
+        resultDiv.classList.add("show");
+        return;
+      }
+
+      const [startH, startM] = startTime.split(":").map(Number);
+      const [endH, endM] = endTime.split(":").map(Number);
+
+      let startTotal = startH * 60 + startM;
+      let endTotal = endH * 60 + endM;
+
+      if (endTotal < startTotal) endTotal += 1440;
+
+      const actualMinutes = endTotal - startTotal;
+      const remaining = target - actualMinutes;
+
+      let message = `🎯 Sisa Waktu: ${target} menit
+⏱️ Waktu Keluar: ${actualMinutes} menit
+`;
+
+      if (remaining > 0) {
+        message += `🕒 Sisa Waktu: ${remaining} menit`;
+        resultDiv.style.backgroundColor = "#fff3e0";
+        resultDiv.style.color = "#ef6c00";
+      } else if (remaining === 0) {
+        message += `✅ Waktu Telah terpakai Habis!`;
+        resultDiv.style.backgroundColor = "#e8f5e9";
+        resultDiv.style.color = "#2e7d32";
+      } else {
+        message += `🎉 Kelebihan waktu: ${Math.abs(remaining)} menit`;
+        resultDiv.style.backgroundColor = "#e3f2fd";
+        resultDiv.style.color = "#1565c0";
+      }
+
+      resultDiv.innerText = message;
+      resultDiv.classList.remove("show");
+      void resultDiv.offsetWidth;
+      resultDiv.classList.add("show");
+    }
+  </script>
+</body>
+</html>
